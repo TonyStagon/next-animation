@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { supabase } from '@/lib/supabase';
 
 export default function Home() {
   const [email, setEmail] = useState('');
@@ -62,9 +63,20 @@ export default function Home() {
     setIsSubmitting(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+      const { error: dbError } = await supabase
+        .from('emails')
+        .insert([{ email }]);
+
+      if (dbError) {
+        if (dbError.code === '23505') {
+          setError('This email has already been submitted');
+        } else {
+          setError('Something went wrong. Please try again.');
+        }
+        setIsSubmitting(false);
+        return;
+      }
+
       setEmail('');
       await playAnimation();
     } catch (err) {
