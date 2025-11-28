@@ -46,10 +46,10 @@ export default function DogAnimation() {
     setPlayMascotSignal((s) => s + 1);
     await mascotPromise;
 
-    // Phase 2: Stand up with tongue
-    dog.classList.add('standing-transition');
+    // Phase 2: Stand up with tongue - SMOOTH RISE
+    dog.classList.add('standing-transition-rise');
     setCurrentState('standing-tongue');
-    await wait(1000);
+    await wait(1200);
 
     // Phase 3: Happy wag
     dog.classList.add('wag');
@@ -63,15 +63,20 @@ export default function DogAnimation() {
     dog.classList.remove('wag');
     await wait(400);
 
-    // Phase 5: Retract tongue
-    dog.classList.remove('tongue-transition');
+    // Phase 5: Retract tongue - SMOOTH MOUTH TRANSITION
+    dog.classList.add('tongue-retract');
+    await wait(400);
     setCurrentState('standing');
-    await wait(800);
+    dog.classList.remove('tongue-transition', 'tongue-retract');
+    await wait(600);
 
-    // Phase 6: Sit back down
-    dog.classList.remove('standing-transition');
+    // Phase 6: Sit back down - SMOOTH DESCENT
+    dog.classList.add('sitting-transition-down');
+    dog.classList.remove('standing-transition-rise');
+    await wait(600);
     setCurrentState('sitting');
-    await wait(800);
+    await wait(400);
+    dog.classList.remove('sitting-transition-down');
 
     dog.classList.remove('breathing');
     setShowSuccess(true);
@@ -154,10 +159,10 @@ export default function DogAnimation() {
           </div>
 
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
-            🦴 Give My Pup a Treat! 🦴
+           Give me a Treat! 🦴
           </h1>
           <p className="text-base text-gray-600">
-            Enter your email and watch the magic happen ✨
+            Enter your email to Feed the Dog 
           </p>
         </div>
 
@@ -226,14 +231,60 @@ export default function DogAnimation() {
           100% { opacity: 1; }
         }
 
-        .dog-container.standing-transition {
-          animation: standUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        .dog-container.tongue-retract img {
+          animation: tongueRetract 0.4s cubic-bezier(0.4, 0, 0.6, 1);
         }
 
-        @keyframes standUp {
-          0% { transform: scale(1) translateY(0); }
-          50% { transform: scale(0.95) translateY(5px); }
-          100% { transform: scale(1) translateY(-10px); }
+        @keyframes tongueRetract {
+          0% { opacity: 1; }
+          50% { opacity: 0.5; }
+          100% { opacity: 1; }
+        }
+
+        .dog-container.standing-transition-rise {
+          animation: standUpSmooth 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+          animation-fill-mode: forwards;
+        }
+
+        @keyframes standUpSmooth {
+          0% { 
+            transform: scale(1) translateY(0) scaleY(1);
+          }
+          20% {
+            transform: scale(0.98) translateY(2px) scaleY(0.96);
+          }
+          50% { 
+            transform: scale(1.02) translateY(-5px) scaleY(1.05);
+          }
+          70% {
+            transform: scale(1) translateY(-12px) scaleY(1.02);
+          }
+          100% { 
+            transform: scale(1) translateY(-15px) scaleY(1);
+          }
+        }
+
+        .dog-container.sitting-transition-down {
+          animation: sitDownSmooth 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+          animation-fill-mode: forwards;
+        }
+
+        @keyframes sitDownSmooth {
+          0% { 
+            transform: scale(1) translateY(-15px) scaleY(1);
+          }
+          30% {
+            transform: scale(1.01) translateY(-10px) scaleY(1.03);
+          }
+          60% { 
+            transform: scale(0.98) translateY(-3px) scaleY(0.97);
+          }
+          80% {
+            transform: scale(1.01) translateY(1px) scaleY(1.02);
+          }
+          100% { 
+            transform: scale(1) translateY(0) scaleY(1);
+          }
         }
 
         .dog-container.wag {
@@ -247,17 +298,17 @@ export default function DogAnimation() {
         }
 
         @keyframes wag {
-          0%, 100% { transform: rotate(-1.5deg); }
-          25% { transform: rotate(-0.5deg); }
-          50% { transform: rotate(1.5deg); }
-          75% { transform: rotate(0.5deg); }
+          0%, 100% { transform: rotate(-1.5deg) translateY(-15px); }
+          25% { transform: rotate(-0.5deg) translateY(-15px); }
+          50% { transform: rotate(1.5deg) translateY(-15px); }
+          75% { transform: rotate(0.5deg) translateY(-15px); }
         }
 
         @keyframes wag-fast {
-          0%, 100% { transform: rotate(-2.5deg); }
-          25% { transform: rotate(-1deg); }
-          50% { transform: rotate(2.5deg); }
-          75% { transform: rotate(1deg); }
+          0%, 100% { transform: rotate(-2.5deg) translateY(-15px); }
+          25% { transform: rotate(-1deg) translateY(-15px); }
+          50% { transform: rotate(2.5deg) translateY(-15px); }
+          75% { transform: rotate(1deg) translateY(-15px); }
         }
       `}</style>
     </main>
